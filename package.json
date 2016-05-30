@@ -1,0 +1,36 @@
+{
+  "name": "node-callback",
+  "version": "1.0.0",
+  "description": "Calling callbacks made easy and safe",
+  "main": "index.js",
+  "engines": {
+    "node": ">=6.0"
+  },
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielkbx/node-callback.git"
+  },
+  "keywords": [
+    "callback",
+    "call",
+    "async",
+    "asnychronous",
+    "safe"
+  ],
+  "author": "Daniel Wetzel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielkbx/node-callback/issues"
+  },
+  "homepage": "https://github.com/danielkbx/node-callback#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  },
+  "dependencies": {
+    "underscore": "^1.8.3"
+  }
+}
