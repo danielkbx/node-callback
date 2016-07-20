@@ -71,3 +71,26 @@ node-callback will use the last function that has been passed to the function. A
 - the function is called not in the same runloop as the Callback object has been created
 - only one call is executed
 - parameters are passed to the _real_ callback in the same order
+
+## Using _arguments_
+
+Some functions might want to provide optional parameters. Since Javascript does not support default values for optional
+parameters (or optional parameters at all), this causes a bunch of lines where the value of arguments is checked for null
+so that the final list of arguments can be created.
+
+When the callback object is created with the _arguments_ variable, the arguments of the function call be access by index:
+
+    function task(value, options, mode, callback) {
+        let cb = new Callback(arguments);
+        console.log(cb.argumentAtPosition(2, 'asap'));
+    }
+
+    task(1, {key: 'value'}, 'slowly');
+    // Output
+    // 'slowly'
+
+    task(1, {key: 'value'}, () => {});
+    // Output
+    // 'asap'
+
+As always (in Javascript) this only works with optional arguments being expected at the end of the arguments list.

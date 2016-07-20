@@ -24,6 +24,7 @@ var setupTick = function() {
 class Callback {
 
 	constructor(args) {
+		this.arguments = [];
 		this.callback = null;
 		this._ticked = false;
 		this._called = false;
@@ -31,20 +32,40 @@ class Callback {
 		if (typeof args === 'function') {
 			this.callback = args;
 		} else if (typeof args !== 'undefined') {
-			for (var i = args.length; i >= 0; i--) {
+			for (var i = args.length - 1; i >= 0; i--) {
 				var arg = args[i];
-				if (typeof arg === 'function') {
+				if (typeof arg === 'function' && !this.callback) {
 					this.callback = arg;
-					break;
+				} else {
+					this.arguments.push(arg);
 				}
 			}
 		}
+
+		this.arguments = this.arguments.reverse();
 
 		if (this.callback) {
 			setupTick.bind(this)();
 		}
 	}
 
+	/**
+	 * Returns the argument at the given position. If no argument at the position is found, null is returned.
+	 * @param {Integer} index
+	 * @returns {*}
+	 */
+	argumentAtPosition(index, defaultValue) {
+		if (typeof defaultValue === 'undefined') {
+			defaultValue = null;
+		}
+
+		if (index >= this.arguments.length) {
+			return defaultValue;
+		}
+
+		return this.arguments[index];
+	}
+	
 	/**
 	 * Executes the callback and passes all arguments.
 	 */

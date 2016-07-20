@@ -80,24 +80,7 @@ describe('A callback object', function() {
 		expect(internalCallback).to.be.equal(function2);
 	});
 
-	it('chooses the last function in the parameter list', function() {
-		// given
-		let function1 = function() {};
-		let function2 = function() {};
 
-		var runTest = function() {
-			let sut = new Callback(arguments);
-
-			// when
-			let internalCallback = sut.callback;
-
-			// then
-			expect(internalCallback).to.be.ok;
-			expect(internalCallback).to.be.equal(function2);
-		}
-
-		runTest(5, 'some string', function1, [], {}, function2);
-	});
 
 	it('runs the callback async when called async', function(done) {
 		// given
@@ -127,7 +110,7 @@ describe('A callback object', function() {
 		sut.call();
 	});
 
-	it('passed the arguments to the callback function', function(done) {
+	it('passes the arguments to the callback function', function(done) {
 		// given
 		let sut = new Callback((a, b, c ,d ,e) => {
 			// then
@@ -160,6 +143,88 @@ describe('A callback object', function() {
 			expect(numberOfCalls).to.equal(1);
 			done();
 		}, 10);
+	});
+
+	describe('Magic Arguments', () => {
+
+		it('does except the arguments objects', () => {
+			// given
+			let cb = function() {};
+			let fn = function() {
+				// then
+				let sut = new Callback(arguments);
+				expect(_.isFunction(sut.callback)).is.true;
+				expect(sut.callback).is.equal(cb);
+			};
+
+			// when
+			fn('one', 2, cb);
+		});
+
+		it('chooses the last function in the parameter list', function() {
+			// given
+			let function1 = function() {};
+			let function2 = function() {};
+
+			var runTest = function() {
+				let sut = new Callback(arguments);
+
+				// when
+				let internalCallback = sut.callback;
+
+				// then
+				expect(internalCallback).to.be.ok;
+				expect(internalCallback).to.be.equal(function2);
+			}
+
+			runTest(5, 'some string', function1, [], {}, function2);
+		});
+
+		it('returns the correct argument', () => {
+			// given
+			let cb = function() {};
+			let fn = function(arg1, arg2, callback) {
+				// then
+				let sut = new Callback(arguments);
+				expect(sut.callback).to.be.equal(cb);
+				expect(sut.argumentAtPosition(0)).to.equal('one');
+				expect(sut.argumentAtPosition(1)).to.equal(2);
+			};
+
+			// when
+			fn('one', 2, cb);
+		});
+
+		it('returns null for an not-passed argument', () => {
+			// given
+			let cb = function() {};
+			let fn = function(arg1, arg2, callback) {
+				// then
+				let sut = new Callback(arguments);
+				expect(sut.callback).to.be.equal(cb);
+				expect(sut.argumentAtPosition(0)).to.equal('one');
+				expect(sut.argumentAtPosition(1)).to.be.null;
+			};
+
+			// when
+			fn('one', cb);
+		});
+
+		it('returns the default value for an not-passed argument', () => {
+			// given
+			let cb = function() {};
+			let fn = function(arg1, arg2, callback) {
+				// then
+				let sut = new Callback(arguments);
+				expect(sut.callback).to.be.equal(cb);
+				expect(sut.argumentAtPosition(0)).to.equal('one');
+				expect(sut.argumentAtPosition(1, 'a string')).to.equal('a string');
+			};
+
+			// when
+			fn('one', cb);
+		});
+
 	});
 
 });
