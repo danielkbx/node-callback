@@ -80,7 +80,37 @@ describe('A callback object', function() {
 		expect(internalCallback).to.be.equal(function2);
 	});
 
+	it('accepts another Callback object', () => {
+		// given
+		let function1 = function() {};
+		let cb = new Callback(function1);
 
+		// when
+		let cb2 = new Callback(cb);
+
+		// then
+		expect(cb2.callback).to.be.equal(function1);
+	});
+
+	it('does not allow to run a copy again', (done) => {
+		// given
+		let numberOfCalls = 0;
+
+		let function1 = function() {numberOfCalls++};
+		let cb = new Callback(function1);
+
+		// when
+		cb.call(); // first, call it
+		let cb2 = new Callback(cb); // then create a copy (which has already been called)
+		cb2.call(); // and call the copy
+
+		// then
+		// then
+		setTimeout(() => {
+			expect(numberOfCalls).to.equal(1);
+			done();
+		}, 10);
+	});
 
 	it('runs the callback async when called async', function(done) {
 		// given

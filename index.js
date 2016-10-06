@@ -29,6 +29,16 @@ class Callback {
 		this._ticked = false;
 		this._called = false;
 
+		if (Callback.prototype.isPrototypeOf(args)) {
+			// we're build with another instance of ourself
+			// we copy every bit since we want to have the exact same behaviour
+			this.arguments = args.arguments;
+			this.callback = args.callback;
+			this._ticked = args._ticked;
+			this._called = args._called;
+			return;
+		}
+
 		if (typeof args === 'function') {
 			this.callback = args;
 		} else if (typeof args !== 'undefined') {
