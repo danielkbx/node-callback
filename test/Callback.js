@@ -17,6 +17,8 @@ describe('A callback object', function() {
 		// then
 		expect(internalCallback).not.to.be.ok;
 		expect(_.isFunction(internalCallback)).to.be.false;
+		expect(sut.hasCallback).to.be.false;
+		expect(sut.call()).to.be.false;
 	});
 
 	it('does not accept a string', function() {
@@ -29,6 +31,8 @@ describe('A callback object', function() {
 		// then
 		expect(internalCallback).not.to.be.ok;
 		expect(_.isFunction(internalCallback)).to.be.false;
+		expect(sut.hasCallback).to.be.false;
+		expect(sut.call()).to.be.false;
 	});
 
 	it('does not accept an object', function() {
@@ -41,6 +45,8 @@ describe('A callback object', function() {
 		// then
 		expect(internalCallback).not.to.be.ok;
 		expect(_.isFunction(internalCallback)).to.be.false;
+		expect(sut.hasCallback).to.be.false;
+		expect(sut.call()).to.be.false;
 	});
 
 	it('does not accept an array of something but functions', function() {
@@ -53,6 +59,8 @@ describe('A callback object', function() {
 		// then
 		expect(internalCallback).not.to.be.ok;
 		expect(_.isFunction(internalCallback)).to.be.false;
+		expect(sut.hasCallback).to.be.false;
+		expect(sut.call()).to.be.false;
 	});
 
 	it('does accept an array with a function as callback', function() {
@@ -64,6 +72,8 @@ describe('A callback object', function() {
 		// then
 		expect(internalCallback).to.be.ok;
 		expect(_.isFunction(internalCallback)).to.be.true;
+		expect(sut.hasCallback).to.be.true;
+		expect(sut.call()).to.be.true;
 	});
 
 	it('chooses the last function in an array as callback', function() {
@@ -78,6 +88,8 @@ describe('A callback object', function() {
 		// then
 		expect(internalCallback).to.be.ok;
 		expect(internalCallback).to.be.equal(function2);
+		expect(sut.hasCallback).to.be.true;
+		expect(sut.call()).to.be.true;
 	});
 
 	it('accepts another Callback object', () => {
@@ -90,6 +102,8 @@ describe('A callback object', function() {
 
 		// then
 		expect(cb2.callback).to.be.equal(function1);
+		expect(cb2.hasCallback).to.be.true;
+		expect(cb2.call()).to.be.true;
 	});
 
 	it('does not allow to run a copy again', (done) => {
@@ -100,13 +114,15 @@ describe('A callback object', function() {
 		let cb = new Callback(function1);
 
 		// when
-		cb.call(); // first, call it
+		let return1 = cb.call(); // first, call it
 		let cb2 = new Callback(cb); // then create a copy (which has already been called)
-		cb2.call(); // and call the copy
+		let return2 = cb2.call(); // and call the copy
 
 		// then
 		// then
 		setTimeout(() => {
+			expect(return1).to.be.true;
+			expect(return2).to.be.true; // this is true though the call is not executed
 			expect(numberOfCalls).to.equal(1);
 			done();
 		}, 10);
@@ -120,7 +136,9 @@ describe('A callback object', function() {
 		});
 
 		// when
-		setTimeout(() => {sut.call()}, 10);
+		setTimeout(() => {
+			expect(sut.call()).to.be.true;
+		}, 10);
 	});
 
 	it('runs the callback async when called sync', function(done) {
@@ -130,14 +148,16 @@ describe('A callback object', function() {
 			calledAsync = true;
 		});
 
+		let returnValue = false;
 		let sut = new Callback(() => {
 			// then
 			expect(calledAsync).to.be.true;
+			expect(returnValue).to.be.true;
 			done();
 		});
 
 		// when
-		sut.call();
+		returnValue = sut.call();
 	});
 
 	it('passes the arguments to the callback function', function(done) {

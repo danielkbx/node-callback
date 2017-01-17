@@ -80,8 +80,13 @@ class Callback {
 	 * Executes the callback and passes all arguments.
 	 */
 	call() {
+
+		if (!this.hasCallback) {
+			return false;
+		}
+
 		if (this._called) {
-			return;
+			return true;
 		}
 		
 		if (this._ticked) {
@@ -99,6 +104,12 @@ class Callback {
 				}
 			});
 		}
+
+		return true;
+	}
+
+	get hasCallback() {
+		return (typeof this.callback === 'function');
 	}
 }
 
